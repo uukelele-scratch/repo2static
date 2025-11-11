@@ -18,5 +18,5 @@ on:
 
 jobs:
   deploy:
-    uses: uukelele-scratch/repo2static/.github/workflows/deploy.yml@v1
+    uses: uukelele-scratch/repo2static/.github/workflows/deploy.yml@main
 ```
