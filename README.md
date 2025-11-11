@@ -16,6 +16,11 @@ on:
       - "readme.md"
   workflow_dispatch:
 
+permissions:
+  pages: write
+  id-token: write
+  contents: read
+
 jobs:
   deploy:
     uses: uukelele-scratch/repo2static/.github/workflows/deploy.yml@main
