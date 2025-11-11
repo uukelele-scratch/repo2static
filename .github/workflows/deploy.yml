@@ -1,0 +1,49 @@
+name: "Deploy to Pages"
+on:
+  workflow_call:
+    inputs:
+      branch:
+        description: "Branch to deploy from"
+        required: false
+        default: "main"
+        type: string
+      readme_paths:
+        description: "Paths that trigger rebuild"
+        required: false
+        default: "README.md,readme.md"
+        type: string
+
+permissions:
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+
+      - name: Prepare dist folder
+        run: mkdir -p dist
+
+      - name: Fetch static template files
+        run: |
+          curl -L "https://raw.githubusercontent.com/uukelele-scratch/repo2static/main/src/index.html" -o ./dist/index.html
+          curl -L "https://raw.githubusercontent.com/uukelele-scratch/repo2static/main/src/styles.css" -o ./dist/styles.css
+          sed -i 's|__REPO_PLACEHOLDER__|${{ github.repository }}|g' ./dist/index.html
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,105 @@
+* { cursor: none !important; }
+
+html, body {
+  height: 100%;      /* make body full height */
+  margin: 0;         /* remove default margin */
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* ensures body fills viewport */
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--pico-primary) var(--pico-background-color);
+}
+
+*::-webkit-scrollbar {
+  height: 12px; /* Controls the height of the horizontal scrollbar */
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--pico-background-color);
+  border-radius: var(--pico-border-radius);
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--pico-primary);
+  border-radius: var(--pico-border-radius);
+  
+  border: 3px solid var(--pico-background-color);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--pico-primary-hover);
+}
+
+main {
+  flex: 1;           /* takes all remaining space */
+}
+
+footer {
+  padding: 1rem;
+  text-align: center;
+}
+
+a /*> button*/ {
+  text-decoration: none; /* remove underline for links wrapping buttons */
+  --pico-text-decoration: none;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* --- */
+
+button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: .5rem;
+}
+
+.caution {
+	--admonition-color: #ca0a0d;
+	--admonition-text-color: #fa0a0d;
+}
+
+.important {
+	--admonition-color: #0a0dca;
+	--admonition-text-color: #0a0dfa;
+}
+
+.admonition {
+  border-left: 4px solid var(--admonition-color);
+  padding-left: 1rem;
+}
+
+.admonition br {
+	display: block;
+	line-height: 1rem;
+}
+
+.admonition .type {
+	color: var(--admonition-text-color);
+	font-weight: bold;
+	
+	display: flex;
+	align-items: center;
+	gap: .25rem;
+}
+
+a[github] {
+	background-color: rgba(0,0,0,0);
+}
+
+a[github] {
+	position: fixed;
+	top: 1rem;
+	left: 1rem;
+}

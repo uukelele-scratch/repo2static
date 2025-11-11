@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <script>window.__DATA={repo:/*new URLSearchParams(window.location.search).get('repo') ?? */"__REPO_PLACEHOLDER__"};if(!__DATA.repo.includes('/'))__DATA.repo=__DATA.repo+'/'+__DATA.repo</script>
+  <title>repo</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico/css/pico.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  
+  	<a href="https://github.com/" github><button github>
+		<i data-lucide="github"></i>
+		GitHub
+	</button></a>
+  
+  <main class="container"></main>
+  
+  <footer>
+    <p>&copy;</p>
+  </footer>
+  <script src="https://cdn.jsdelivr.net/gh/uukelele-scratch/Smooth-Cursor/dist/smooth-cursor.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.min.js"></script> 
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>lucide.createIcons();</script>
+  <script type="module">
+	const $ = document.querySelector.bind(document);
+	const sanitize = html => { return new Option(html).innerHTML; }
+  
+	document.title = __DATA.repo.split('/')[1];
+	
+	const year = new Date().getFullYear();
+	$('footer p').innerHTML = `&copy; ${year} <a href="https://github.com/${__DATA.repo.split('/')[0]}">${sanitize(__DATA.repo.split('/')[0])}</a>`;
+  
+	$('a[github]').href = 'https://github.com/' + __DATA.repo;
+	
+	async function fetchREADME(repo) {
+		const filenames = [
+			"README.md",
+			"README.rst",
+		];
+		let paths = [];
+		filenames.forEach(filename => {
+			const prefix = `https://raw.githubusercontent.com/${repo}/master/`;
+			paths.push(prefix + filename);
+			paths.push(prefix + filename.toLowerCase());
+			paths.push(prefix + filename.toUpperCase());
+		});
+		// remove duplicates
+		paths = [...new Set(paths)];
+		
+		for (const path of paths) {
+			const res = await fetch(path);
+			if (res.ok) return res.text();
+		}
+		
+		const response = await fetch(`https://api.github.com/repos/${repo}/readme`);
+		if (!response.ok) return;
+		
+		const data = await response.json()
+		const content = data.content;
+		
+		return new TextDecoder().decode(Uint8Array.from(atob(content), c => c.charCodeAt(0)));
+	}
+  
+	let readMe = await fetchREADME(__DATA.repo);
+	
+const admonitionExtension = {
+  name: 'admonition',
+  level: 'block', // This is a block-level extension
+  start(src) {
+    return src.match(/^> \[!/i)?.index;
+  },
+  tokenizer(src) {
+    const rule = /^( *> ?\[![^\]]+\](?:[^\n]*)(?:\n|$))((?: *> ?.*(?:\n|$))|(?:(?! *\n)[^>\n].*(?:\n|$)))*/;
+    const match = rule.exec(src);
+
+    if (match) {
+		const raw = match[0];
+		const typeMatch = match[1].match(/\[!([^\]]+)\]/);
+		const type = typeMatch ? typeMatch[1].toUpperCase() : 'NOTE';
+      
+		const content = raw
+			.replace(/^ *> ?/gm, '')
+			.replace(/^\[![^\]]+\]\n?/, '');
+	  
+	  return {
+        type: 'admonition',
+        raw: raw,
+        level: type,
+        text: content.trim(),
+        tokens: this.lexer.blockTokens(content, []),
+      };
+    }
+  },
+  renderer(token) {
+    const text = this.parser.parse(token.tokens);
+	const iconMap = {
+		"caution": "triangle-alert",
+		"information": "info",
+		"info": "info",
+		"important": "message-square-warning",
+	}
+    return `
+      <div class="admonition ${token.level.toLowerCase()}">
+        <span class="type">
+			<i data-lucide="${iconMap[token.level.toLowerCase()]}" height=20></i>
+			${token.level}
+		</span>
+        ${text}
+      </div>`;
+  },
+};
+		
+	marked.use({ extensions: [admonitionExtension] });
+	
+	const parsed = marked.parse(readMe);
+	// console.log(parsed);
+
+	$('main').innerHTML = parsed;
+	
+	lucide?.createIcons();
+  </script>
+</body>
+</html>
