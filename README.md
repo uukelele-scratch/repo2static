@@ -3,7 +3,9 @@ A GitHub action to give your repository a static Pages website.
 
 ## Usage
 
-Create a GitHub workflow @ `.github/workflows/deploy-readme.yml`:
+1. Enable Pages for your repo @ https://github.com/user/repo/settings/pages
+
+2. Create a GitHub workflow @ `.github/workflows/deploy-readme.yml`:
 
 ```yaml
 name: Deploy to Pages
@@ -25,3 +27,5 @@ jobs:
   deploy:
     uses: uukelele-scratch/repo2static/.github/workflows/deploy.yml@main
 ```
+
+3. Go to Actions and trigger a workflow run for Deploy.
