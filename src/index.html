@@ -26,6 +26,11 @@
   <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
   <script>lucide.createIcons();</script>
   <script type="module">(async()=>{
+	
+	// polyfill for compatibility on older browsers
+	if (!Array.prototype.at) { Array.prototype.at = function(n) { n = Math.trunc(n) || 0; if (n < 0) n += this.length; if (n < 0 || n >= this.length) return undefined; return this[n];}}
+
+	
 	const $ = document.querySelector.bind(document);
 	const sanitize = html => { return new Option(html).innerHTML; }
   
